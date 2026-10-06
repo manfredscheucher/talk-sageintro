@@ -1,0 +1,4 @@
+*.slides.html
+.ipynb_checkpoints/
+*.sage.py
+scripts/tsp_check.sage
