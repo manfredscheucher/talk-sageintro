@@ -25,11 +25,12 @@ def circle3(p1,p2,p3):
     A=np.array([[x2-x1,y2-y1],[x3-x1,y3-y1]]); rhs=0.5*np.array([x2*x2-x1*x1+y2*y2-y1*y1, x3*x3-x1*x1+y3*y3-y1*y1])
     cx,cy=np.linalg.solve(A,rhs); R=np.hypot(cx-x1,cy-y1); return np.array([cx,cy,-1.0]),R
 
-nR=unit([0.49,0,-0.87]); cR=0.4
-nB=unit([-0.49,0,-0.87]); cB=0.4
+# asymmetric circles so A,B,C,D are irregularly placed (not mirror-symmetric)
+nR=unit([0.3,0.3,-0.8]); cR=0.25
+nB=unit([0.3,0.6,-0.75]); cB=0.45
 P=np.array([0,0,1.0])
 A3,B3=line_sphere(nR,cR,nB,cB)
-C3=small_circle_point(nR,cR,0.0); D3=small_circle_point(nB,cB,np.pi)
+C3=small_circle_point(nR,cR,0.6); D3=small_circle_point(nB,cB,2.0)
 Ap,Bp,Cp,Dp=project(A3),project(B3),project(C3),project(D3)
 redCenter,redR=circle3(Ap,Bp,Cp); blueCenter,blueR=circle3(Ap,Bp,Dp)
 
@@ -71,11 +72,7 @@ fig+=lbl(P,DARK,"P",(0,0,0.32)); fig+=lbl(A3,DARK,"A",(0,0.30,0.22)); fig+=lbl(B
 fig+=lbl(C3,RED,"C",(0.30,0,0.22)); fig+=lbl(D3,BLUE,"D",(-0.36,0,0.22))
 fig+=lbl(Ap,DARK,"A'",(0,0.34,0.22)); fig+=lbl(Bp,DARK,"B'",(0,-0.40,0.22))
 fig+=lbl(Cp,RED,"C'",(0.36,0,0.22)); fig+=lbl(Dp,BLUE,"D'",(-0.44,0,0.22))
-# Default orientation: upright 3/4 view. The static Tachyon raytracer ignores
-# viewpoint, so we orient by rotating fig. The world z-axis points up; a single
-# rotateX tilt (no rotateZ skew) tips the camera down so the z=-1 plane reads as
-# a level horizontal floor and the sphere sits above it.
-fig = fig.rotateX(-70*pi/180)
-# in the notebook: fig.show()  (interactive Three.js viewer)
+# No scene rotation: the z-axis points up, sphere at origin, plane z=-1 flat below.
+# In the interactive viewer you rotate it yourself.
 fig.save('/tmp/stereo_cell.png', frame=True, figsize=[7,7])   # headless proof it builds
 print("cell builds OK")
