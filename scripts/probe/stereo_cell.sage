@@ -34,35 +34,48 @@ Ap,Bp,Cp,Dp=project(A3),project(B3),project(C3),project(D3)
 redCenter,redR=circle3(Ap,Bp,Cp); blueCenter,blueR=circle3(Ap,Bp,Dp)
 
 RED=(0.85,0.12,0.12); BLUE=(0.12,0.30,0.85); DARK=(0.08,0.08,0.08)
+# Visual tuning (geometry/asserts untouched):
+CIRCLE_TH=3      # on-sphere tori + projected circles (was 6 -> halved)
+RAY_TH=4         # rays P->A'..D' (was 1 -> thicker)
+POINT_SZ=26      # fat dots, ~2x the circle tube thickness (was 16)
 fig=Graphics()
-fig+=sphere((0,0,0),1,color=(0.80,0.85,0.92),opacity=0.18,mesh=False)
+# yellow, still transparent so inner circles/points stay visible
+fig+=sphere((0,0,0),1,color=(1.0,0.90,0.15),opacity=0.30,mesh=False)
 S=3.0
 fig+=polygon3d([(-S,-S,-1),(S,-S,-1),(S,S,-1),(-S,S,-1)],color=(0.70,0.80,0.95),opacity=0.15)
+# solid border so the plane z=-1 is visible even in the raytracer (transparent faces render faintly)
+fig+=line3d([(-S,-S,-1),(S,-S,-1),(S,S,-1),(-S,S,-1),(-S,-S,-1)],color=(0.4,0.5,0.7),thickness=2)
 th=var('th')
 def sc(n,c,col):
     nn,u,v=ortho_frame(n); rho=float(np.sqrt(1-c*c)); cn=[float(c)*float(nn[i]) for i in range(3)]
-    return parametric_plot3d(tuple(cn[i]+rho*(cos(th)*float(u[i])+sin(th)*float(v[i])) for i in range(3)),(th,0,2*pi),color=col,thickness=6)
+    return parametric_plot3d(tuple(cn[i]+rho*(cos(th)*float(u[i])+sin(th)*float(v[i])) for i in range(3)),(th,0,2*pi),color=col,thickness=CIRCLE_TH)
 fig+=sc(nR,cR,RED); fig+=sc(nB,cB,BLUE)
 def pc(center,R,col):
     cx,cy,cz=float(center[0]),float(center[1]),float(center[2]); R=float(R)
-    return parametric_plot3d((cx+R*cos(th),cy+R*sin(th),cz),(th,0,2*pi),color=col,thickness=6)
+    return parametric_plot3d((cx+R*cos(th),cy+R*sin(th),cz),(th,0,2*pi),color=col,thickness=CIRCLE_TH)
 fig+=pc(redCenter,redR,RED); fig+=pc(blueCenter,blueR,BLUE)
 for Qp in [Ap,Bp,Cp,Dp]:
-    fig+=line3d([tuple(P),tuple(Qp)],color=(0.55,0.55,0.55),thickness=1)
-def pt(coord,col,name,off):
-    g=point3d(tuple(coord),size=16,color=col)
-    g+=text3d(name,tuple(np.array(coord,float)+np.array(off)),color=DARK,fontsize=16)
-    return g
-fig+=pt(P,DARK,"P",(0.10,0,0.16)); fig+=pt(A3,DARK,"A",(0,0.16,0.12)); fig+=pt(B3,DARK,"B",(0,-0.20,0.12))
-fig+=pt(C3,RED,"C",(0.16,0,0.12)); fig+=pt(D3,BLUE,"D",(-0.22,0,0.12))
-fig+=pt(Ap,DARK,"A'",(0.12,0.18,0)); fig+=pt(Bp,DARK,"B'",(0.12,-0.24,0))
-fig+=pt(Cp,RED,"C'",(0.20,0,0)); fig+=pt(Dp,BLUE,"D'",(-0.28,0,0))
-# Default orientation: elevated 3/4 view looking down onto the z=-1 plane.
-# Applied to fig itself so BOTH the interactive Three.js viewer (fig.show())
-# and any static render start from this angle. The scene's symmetry plane is
-# x=0; rotateZ swings it off-axis (no axis-on collapse), rotateX tilts the
-# camera down so the plane reads as a floor below the sphere.
-fig = fig.rotateZ(35*pi/180).rotateX(-65*pi/180)
+    fig+=line3d([tuple(P),tuple(Qp)],color=(0.55,0.55,0.55),thickness=RAY_TH)
+# fat dots (added before labels)
+def ptdot(coord,col):
+    return point3d(tuple(coord),size=POINT_SZ,color=col)
+fig+=ptdot(P,DARK); fig+=ptdot(A3,DARK); fig+=ptdot(B3,DARK)
+fig+=ptdot(C3,RED); fig+=ptdot(D3,BLUE)
+fig+=ptdot(Ap,DARK); fig+=ptdot(Bp,DARK)
+fig+=ptdot(Cp,RED); fig+=ptdot(Dp,BLUE)
+# labels LAST so they stay in the foreground; offsets nudge them outward/up
+def lbl(coord,col,name,off):
+    return text3d(name,tuple(np.array(coord,float)+np.array(off)),color=col,fontsize=22)
+# larger offsets so letters sit clear of the fat dots, not inside them
+fig+=lbl(P,DARK,"P",(0,0,0.32)); fig+=lbl(A3,DARK,"A",(0,0.30,0.22)); fig+=lbl(B3,DARK,"B",(0,-0.34,0.22))
+fig+=lbl(C3,RED,"C",(0.30,0,0.22)); fig+=lbl(D3,BLUE,"D",(-0.36,0,0.22))
+fig+=lbl(Ap,DARK,"A'",(0,0.34,0.22)); fig+=lbl(Bp,DARK,"B'",(0,-0.40,0.22))
+fig+=lbl(Cp,RED,"C'",(0.36,0,0.22)); fig+=lbl(Dp,BLUE,"D'",(-0.44,0,0.22))
+# Default orientation: upright 3/4 view. The static Tachyon raytracer ignores
+# viewpoint, so we orient by rotating fig. The world z-axis points up; a single
+# rotateX tilt (no rotateZ skew) tips the camera down so the z=-1 plane reads as
+# a level horizontal floor and the sphere sits above it.
+fig = fig.rotateX(-70*pi/180)
 # in the notebook: fig.show()  (interactive Three.js viewer)
 fig.save('/tmp/stereo_cell.png', frame=True, figsize=[7,7])   # headless proof it builds
 print("cell builds OK")

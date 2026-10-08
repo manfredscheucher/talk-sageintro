@@ -158,8 +158,7 @@ fig = Graphics()
 
 # Transparent unit sphere: light, smooth, low opacity so it reads as "sphere"
 # but never hides the circles/points inside and in front of it.
-fig += sphere((0, 0, 0), 1, color=(0.75, 0.82, 0.92), opacity=0.30,
-              mesh=True, aspect_ratio=1)
+fig += sphere((0, 0, 0), 1, color=(1.0, 0.90, 0.15), opacity=0.30, mesh=False, aspect_ratio=1)
 
 # Tangent plane z = -1: a subtle shaded square big enough to contain every
 # primed point (max projected radius ~2.2 -> half-width 3.0 is comfortable).
@@ -177,7 +176,7 @@ def sphere_circle_plot(n, c, col):
     cn = [float(c) * float(nn[i]) for i in range(3)]
     expr = tuple(cn[i] + rho * (cos(th) * float(u[i]) + sin(th) * float(v[i]))
                  for i in range(3))
-    return parametric_plot3d(expr, (th, 0, 2 * pi), color=col, thickness=6)
+    return parametric_plot3d(expr, (th, 0, 2 * pi), color=col, thickness=3)
 
 fig += sphere_circle_plot(nR, cR, RED)    # red circle on sphere
 fig += sphere_circle_plot(nB, cB, BLUE)   # blue circle on sphere
@@ -186,7 +185,7 @@ def planar_circle_plot(center, R, col):
     cx, cy, cz = float(center[0]), float(center[1]), float(center[2])
     R = float(R)
     expr = (cx + R * cos(th), cy + R * sin(th), cz)
-    return parametric_plot3d(expr, (th, 0, 2 * pi), color=col, thickness=6)
+    return parametric_plot3d(expr, (th, 0, 2 * pi), color=col, thickness=3)
 
 fig += planar_circle_plot(redCenter, redR, RED)    # projected red circle
 fig += planar_circle_plot(blueCenter, blueR, BLUE)  # projected blue circle
@@ -195,14 +194,14 @@ fig += planar_circle_plot(blueCenter, blueR, BLUE)  # projected blue circle
 # point. Thin + light so the construction lines never dominate the picture.
 for Q, Qp in [(A3, Ap), (B3, Bp), (C3, Cp), (D3, Dp)]:
     fig += line3d([tuple(P), tuple(Qp)], color=(0.55, 0.55, 0.55),
-                  thickness=1, linestyle='--')
+                  thickness=4)
 
 # Points and labels. The label sits a little above/beside the dot (offset along
 # a direction that keeps it off the dot) in a dark readable color.
 def pt(coord, col, name, off=(0.12, 0.0, 0.14)):
-    g = point3d(tuple(coord), size=16, color=col)
+    g = point3d(tuple(coord), size=26, color=col)
     g += text3d(name, tuple(np.array(coord, float) + np.array(off)),
-                color=DARK, fontsize=16)
+                color=DARK, fontsize=26)
     return g
 
 # A, B are shared by both circles -> neutral dark. C red, D blue. P black.
