@@ -1,58 +1,28 @@
-# Solving Math Problems with SageMath — an Introduction
+# Introduction to SageMath
 
-A Jupyter Notebook slideshow introducing SageMath: logic, optimization, graph
-theory and more. The talk (`talk_en.ipynb`) is organized into 4 parts as natural
-stopping points: **1** What is Sage + Basics · **2** Math Applications ·
-**3** Geometry & Graphs · **4** Optimization & Solvers.
+A Jupyter Notebook slideshow introducing SageMath. The talk (`talk_en.ipynb`) is
+organized into 4 parts (natural stopping points):
 
-## Install SageMath
+* Getting Started
+* Calculus & Algebra
+* Geometry & Graphs
+* Logic & Optimization
 
-**macOS**
+## Try it out online! — No Installation Needed
+
+* **The interactive slides**, right in your browser:
+  [open in Google Colab](https://colab.research.google.com/drive/1vpFRrltE92e9ZJP21lvn_GdL6cq8C18R).
+* **A fresh Sage notebook** to play around:
+  [CoCalc](https://cocalc.ai/features/sage).
+
+## ...but I want to install SageMath on my machine!
+
+Okay okay! Here is a tutorial:
+[doc.sagemath.org/html/en/installation](https://doc.sagemath.org/html/en/installation/).
+Essentially you install conda, and with conda you install SageMath:
+
 ```bash
-brew install --cask sage  # or: download from sagemath.org/download.html
+conda create -n sage sage
 ```
 
-**Linux** (Ubuntu/Debian)
-```bash
-sudo apt install sagemath
-# or via conda-forge:
-conda create -n sage sage python=3.12
-```
-
-**Windows** (WSL2 recommended)
-```bash
-# install WSL2 with Ubuntu, then follow the Linux steps
-sudo apt install sagemath
-```
-
-More info: [doc.sagemath.org/html/en/installation](https://doc.sagemath.org/html/en/installation/)
-
-## Run the notebook
-
-```
-sage --notebook jupyter
-```
-
-## Export slides
-
-Generate the slides as HTML:
-```bash
-sage -sh -c "jupyter nbconvert --to slides talk_en.ipynb"
-```
-
-Open interactively in the browser (arrow keys / spacebar):
-```
-talk_en.slides.html
-```
-
-Print to PDF: open `talk_en.slides.html?print-pdf` in the browser → Cmd+P → Save as PDF.
-
-## Export as PDF
-
-Requires pandoc:
-```bash
-brew install pandoc      # macOS
-sudo apt install pandoc  # Linux
-```
-
-Then: `sage --notebook jupyter` → in the browser: **File → Save and Export Notebook As → PDF**
+Then just run `sage --notebook` and open the notebook.
